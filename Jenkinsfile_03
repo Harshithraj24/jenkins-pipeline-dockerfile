@@ -6,19 +6,7 @@ pipeline {
         dockerImage=""
     }
 
-//     agent {
-//         dockerfile {
-//             label "docker"
-//         }
-//     }
 
-//     stages {
-//         stage("Build") {
-//             steps {    
-//                 sh "mvn -version"
-//                 sh "mvn clean install"
-//             }
-//         }
        stage('Build image') {
             steps{
            script {
@@ -26,7 +14,7 @@ pipeline {
         }
       }
     }
-    }
+
 
     post {
         always {
