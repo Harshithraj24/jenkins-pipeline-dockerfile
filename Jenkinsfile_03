@@ -10,8 +10,7 @@ pipeline {
 
     stages {
         stage("Build") {
-            steps {
-                sh "ssh -V"
+            steps {    
                 sh "mvn -version"
                 sh "mvn clean install"
             }
