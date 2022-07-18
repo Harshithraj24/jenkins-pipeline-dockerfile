@@ -1,5 +1,7 @@
 FROM maven:3.6.0-jdk-13
 
-RUN useradd -m -u 1000 -s /bin/bash jenkins
+EXPOSE 8080
 
-RUN yum install -y openssh-clients
+ADD target/maven-pipeline-demo-1.0-SNAPSHOT.jar maven-pipeline-demo-1.0-SNAPSHOT.jar
+
+ENTRYPOINT ["java","-jar","maven-pipeline-demo-1.0-SNAPSHOT.jar"]
