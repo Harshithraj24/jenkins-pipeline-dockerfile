@@ -66,29 +66,46 @@ pipeline {
 [source,groovy]
 ----
 #!groovy
-
 pipeline {
-   
-    agent {
-        dockerfile {
-            label "docker"
-        }
+    triggers {
+    githubPush()
+  }
+
+  environment {
+    dockerimagename = "harshithraj24/javaapp"
+    dockerImage = ""
+  }
+
+  agent any
+
+  stages {
+
+    stage('Checkout Source') {
+      steps {
+        git 'https://github.com/Harshithraj24/jenkins-pipeline-dockerfile'      }
     }
 
-    stages {
-        stage("Build") {
-            steps {
-                sh "ssh -V"
-                sh "mvn -version"
-                sh "mvn clean install"
-            }
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
         }
+      }
     }
 
-    post {
-        always {
-            cleanWs()
+    stage('Pushing Image') {
+      environment {
+               registryCredential = 'dockerhublogin'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
         }
+      }
     }
+  }
 }
+
 ----
