@@ -73,7 +73,6 @@ pipeline {
 
   environment {
     dockerimagename = "harshithraj24/javaapp"
-    dockerImage = ""
   }
 
   agent any
@@ -82,8 +81,17 @@ pipeline {
 
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/Harshithraj24/jenkins-pipeline-dockerfile'      }
+         git branch: 'main', url: 'https://github.com/Harshithraj24/jenkins-pipeline-dockerfile'
+        }
     }
+    
+    stage("Build") {
+            steps {
+                sh "mvn -version"
+                sh "mvn clean install"
+            }
+    }
+    
 
     stage('Build image') {
       steps{
@@ -102,6 +110,14 @@ pipeline {
           docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
             dockerImage.push("latest")
           }
+        }
+      }
+    }
+    
+    stage('Deploying App to Kubernetes') {
+      steps {
+        script {
+          kubernetesDeploy(configs: "java.yml", kubeconfigId: "kubernetes")
         }
       }
     }
